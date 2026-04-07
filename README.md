@@ -15,8 +15,3 @@ Aplicação web que busca bebidas usando a API TheCocktailDB.
 - Mostrar dados da API
 - Salvar no localStorage
 - Excluir da tabela
-
-## Como executar
-
-1. Baixe o projeto
-2. Abra o arquivo index.html no navegador
