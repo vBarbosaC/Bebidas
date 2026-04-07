@@ -43,6 +43,7 @@ let linha = `
 <td>${drink.strCategory}</td>
 <td>${drink.strAlcoholic}</td>
 <td>${drink.strIngredient1}</td>
+<td><img src="${drink.strDrinkThumb}" width="80"></td>
 <td><button onclick="remover(this)">Excluir</button></td>
 </tr>
 `;
