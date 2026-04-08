@@ -1,7 +1,4 @@
-/**
- * Busca bebida na API
- * @returns {void}
- */
+
 async function buscarBebida(){
 
 let nome = document.getElementById("drink").value;
@@ -39,11 +36,11 @@ let tabela = document.getElementById("tabela");
 
 let linha = `
 <tr>
+<td><img src="${drink.strDrinkThumb}" width="160"></td>
 <td>${drink.strDrink}</td>
 <td>${drink.strCategory}</td>
 <td>${drink.strAlcoholic}</td>
-<td>${drink.strIngredient1}</td>
-<td><img src="${drink.strDrinkThumb}" width="80"></td>
+<td>${drink.strIngredient1, drink.strIngredient2}</td>
 <td><button onclick="remover(this)">Excluir</button></td>
 </tr>
 `;
