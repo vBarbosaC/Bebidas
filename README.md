@@ -16,3 +16,5 @@ Aplicação web que busca bebidas usando a API TheCocktailDB.
 - Mostrar dados da API
 - Salvar no localStorage
 - Excluir da tabela
+- Favoritos
+- Receita

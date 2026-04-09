@@ -13,6 +13,7 @@ async function abrirModalDireto(id) {
 
         const drink = dados.drinks[0];
         let ingredientes = "";
+        
 
         // Percorre os 15 possíveis ingredientes da API
         for (let i = 1; i <= 15; i++) {
