@@ -1,72 +1,155 @@
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
-async function buscarBebida(){
+// --- FUNÇÃO ABRIR MODAL (RECEITA) ---
+async function abrirModalDireto(id) {
+    try {
+        const resposta = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+        const dados = await resposta.json();
 
-let nome = document.getElementById("drink").value;
+        if (!dados.drinks) {
+            alert("Receita não encontrada!");
+            return;
+        }
 
-if(nome === ""){
-alert("Digite uma bebida");
-return;
+        const drink = dados.drinks[0];
+        let ingredientes = "";
+
+        // Percorre os 15 possíveis ingredientes da API
+        for (let i = 1; i <= 15; i++) {
+            let ing = drink[`strIngredient${i}`];
+            let medida = drink[`strMeasure${i}`];
+            if (ing) {
+                ingredientes += `<li>${medida ? medida : ""} ${ing}</li>`;
+            }
+        }
+
+        const conteudo = `
+            <h2 style="color:#f39c12">${drink.strDrink}</h2>
+            <img src="${drink.strDrinkThumb}" width="100%" style="max-width:250px; display:block; margin:auto">
+            <p><b>Categoria:</b> ${drink.strCategory}</p>
+            <p><b>Tipo:</b> ${drink.strAlcoholic}</p>
+            <h3>Ingredientes:</h3>
+            <ul>${ingredientes}</ul>
+            <h3>Modo de Preparo:</h3>
+            <p>${drink.strInstructions}</p>
+        `;
+
+        document.getElementById("conteudoModal").innerHTML = conteudo;
+        document.getElementById("modal").style.display = "block";
+    } catch (erro) {
+        console.error("Erro ao buscar detalhes:", erro);
+        alert("Erro ao carregar a receita.");
+    }
 }
 
-let resposta = await fetch(
-`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${nome}`
-);
-
-let dados = await resposta.json();
-
-if(!dados.drinks){
-alert("Bebida não encontrada");
-return;
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
 }
 
-let drink = dados.drinks[0];
-
-mostrarTabela(drink);
-
-salvarLocal(drink);
-
+// Fechar modal ao clicar fora dele
+window.onclick = function(event) {
+    let modal = document.getElementById("modal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
 
-/**
- * Mostra bebida na tabela
- */
-function mostrarTabela(drink){
+// --- BUSCAR POR NOME ---
+async function buscarBebida() {
+    let nome = document.getElementById("drink").value;
+    if (!nome) return alert("Digite o nome de uma bebida!");
 
-let tabela = document.getElementById("tabela");
+    const resposta = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${nome}`);
+    const dados = await resposta.json();
 
-let linha = `
-<tr>
-<td><img src="${drink.strDrinkThumb}" width="160"></td>
-<td>${drink.strDrink}</td>
-<td>${drink.strCategory}</td>
-<td>${drink.strAlcoholic}</td>
-<td>${drink.strIngredient1, drink.strIngredient2}</td>
-<td><button onclick="remover(this)">Excluir</button></td>
-</tr>
-`;
+    if (!dados.drinks) return alert("Nenhuma bebida encontrada.");
+    
+    let tabela = document.getElementById("tabela");
+    let html = "";
 
-tabela.innerHTML += linha;
-
+    dados.drinks.forEach(drink => {
+        html += `
+            <tr>
+                <td><img src="${drink.strDrinkThumb}" width="80"></td>
+                <td><b>${drink.strDrink}</b></td>
+                <td>${drink.strCategory}</td>
+                <td>${drink.strAlcoholic}</td>
+                <td>${drink.strIngredient1 || ""}...</td>
+                <td>
+                    <button class="btn-receita" onclick="abrirModalDireto('${drink.idDrink}')">Receita</button>
+                    <button class="btn-salvar" onclick="salvarFavorito('${drink.idDrink}')">Salvar ⭐</button>
+                    <button class="btn-excluir" onclick="this.parentElement.parentElement.remove()">Excluir</button>
+                </td>
+            </tr>`;
+    });
+    tabela.innerHTML = html;
 }
 
-/**
- * Remove linha da tabela
- * @param {HTMLElement} botao
- */
-function remover(botao){
-botao.parentElement.parentElement.remove();
+// --- FAVORITOS ---
+async function salvarFavorito(id) {
+    // Evita duplicados
+    if (favoritos.some(fav => fav.idDrink === id)) return alert("Já está nos favoritos!");
+
+    const resposta = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
+    const dados = await resposta.json();
+    
+    favoritos.push(dados.drinks[0]);
+    localStorage.setItem("favoritos", JSON.stringify(favoritos));
+    mostrarFavoritos();
 }
 
-/**
- * Salva bebida no localStorage
- * @param {object} drink
- */
-function salvarLocal(drink){
+function mostrarFavoritos() {
+    let tabela = document.getElementById("tabelaFavoritos");
+    let html = "";
 
-let lista = JSON.parse(localStorage.getItem("bebidas")) || [];
-
-lista.push(drink);
-
-localStorage.setItem("bebidas", JSON.stringify(lista));
-
+    favoritos.forEach((drink, i) => {
+        html += `
+            <tr>
+                <td><img src="${drink.strDrinkThumb}" width="60"></td>
+                <td>${drink.strDrink}</td>
+                <td>
+                    <button class="btn-receita" onclick="abrirModalDireto('${drink.idDrink}')">Receita</button>
+                    <button class="btn-excluir" onclick="removerFavorito(${i})">Remover</button>
+                </td>
+            </tr>`;
+    });
+    tabela.innerHTML = html;
 }
+
+function removerFavorito(i) {
+    favoritos.splice(i, 1);
+    localStorage.setItem("favoritos", JSON.stringify(favoritos));
+    mostrarFavoritos();
+}
+
+// --- BUSCAR POR INGREDIENTE ---
+async function buscarPorIngrediente() {
+    let ing = document.getElementById("ingrediente").value;
+    if (!ing) return alert("Digite um ingrediente!");
+
+    const resposta = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${ing}`);
+    const dados = await resposta.json();
+
+    let tabela = document.getElementById("tabelaIngredientes");
+    let html = "";
+
+    dados.drinks.forEach(drink => {
+        html += `
+            <tr>
+                <td><img src="${drink.strDrinkThumb}" width="80"></td>
+                <td>
+                    ${drink.strDrink}<br>
+                    <button class="btn-receita" onclick="abrirModalDireto('${drink.idDrink}')">Receita</button>
+                    <button class="btn-salvar" onclick="salvarFavorito('${drink.idDrink}')">Salvar ⭐</button>
+                </td>
+            </tr>`;
+    });
+    tabela.innerHTML = html;
+}
+
+// --- FUNÇÕES DE LIMPAR ---
+function limparTabela() { document.getElementById("tabela").innerHTML = ""; }
+function limparTabelaIngredientes() { document.getElementById("tabelaIngredientes").innerHTML = ""; }
+
+// Inicializa favoritos ao carregar
+mostrarFavoritos();

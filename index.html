@@ -1,38 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Busca de Bebidas</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Bebidas 🍹</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<h1>Buscar Bebidas 🍹</h1>
+    <h1>Buscar Bebidas 🍹</h1>
 
-<input type="text" id="drink" placeholder="Digite a bebida">
-<button onclick="buscarBebida()">Buscar</button>
+    <input type="text" id="drink" placeholder="Digite a bebida">
+    <button onclick="buscarBebida()">Buscar</button>
+    <button onclick="limparTabela()">Limpar</button>
 
-<table>
+    <table>
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Ingredientes</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+    </table>
 
-<thead>
-<tr>
-<th>Foto</th>
-<th>Nome</th>
-<th>Categoria</th>
-<th>Tipo</th>
-<th>Ingrediente</th>
-<th>Ação</th>
-</tr>
-</thead>
+    <hr>
 
-<tbody id="tabela"></tbody>
+    <h2>Buscar por Ingredientes 🧪</h2>
+    <input type="text" id="ingrediente" placeholder="Digite o ingrediente">
+    <button onclick="buscarPorIngrediente()">Buscar</button>
+    <button onclick="limparTabelaIngredientes()">Limpar</button>
 
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nome</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaIngredientes"></tbody>
+    </table>
 
-<script src="js/script.js"></script>
+    <hr>
 
+    <h2>⭐ Favoritos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nome</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaFavoritos"></tbody>
+    </table>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <div id="conteudoModal"></div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
