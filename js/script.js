@@ -13,7 +13,7 @@ async function abrirModalDireto(id) {
 
         const drink = dados.drinks[0];
         let ingredientes = "";
-        
+
 
         // Percorre os 15 possíveis ingredientes da API
         for (let i = 1; i <= 15; i++) {
@@ -154,3 +154,17 @@ function limparTabelaIngredientes() { document.getElementById("tabelaIngrediente
 
 // Inicializa favoritos ao carregar
 mostrarFavoritos();
+
+// ENTER para buscar bebida
+document.getElementById("drink").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        buscarBebida();
+    }
+});
+
+// ENTER para buscar ingrediente
+document.getElementById("ingrediente").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        buscarPorIngrediente();
+    }
+});
