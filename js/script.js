@@ -1,6 +1,6 @@
 let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
-// --- FUNÇÃO ABRIR MODAL (RECEITA) ---
+//  MODAL (RECEITA)
 async function abrirModalDireto(id) {
     try {
         const resposta = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`);
@@ -47,7 +47,7 @@ function fecharModal() {
     document.getElementById("modal").style.display = "none";
 }
 
-// Fechar modal ao clicar fora dele
+// Fechar modal
 window.onclick = function(event) {
     let modal = document.getElementById("modal");
     if (event.target == modal) {
@@ -55,7 +55,7 @@ window.onclick = function(event) {
     }
 }
 
-// --- BUSCAR POR NOME ---
+
 async function buscarBebida() {
     let nome = document.getElementById("drink").value;
     if (!nome) return alert("Digite o nome de uma bebida!");
@@ -152,7 +152,6 @@ async function buscarPorIngrediente() {
 function limparTabela() { document.getElementById("tabela").innerHTML = ""; }
 function limparTabelaIngredientes() { document.getElementById("tabelaIngredientes").innerHTML = ""; }
 
-// Inicializa favoritos ao carregar
 mostrarFavoritos();
 
 // ENTER para buscar bebida
